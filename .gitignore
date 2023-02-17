@@ -1,6 +1,8 @@
 .idea/
 venv/
+env1/
 *__pycache__*
 .coverage
 .coveragerc
 .DS_store
+1_TAMARA.txt
