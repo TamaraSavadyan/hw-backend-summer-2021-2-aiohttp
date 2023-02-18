@@ -11,7 +11,7 @@ class Database:
     # TODO: добавить поля admins и questions
     #!! DONE
     admins: list[Admin] = field(default_factory=list)
-    questons: list[Question] = field(default_factory=list)
+    questions: list[Question] = field(default_factory=list)
     themes: list[Theme] = field(default_factory=list)
 
     @property

@@ -11,11 +11,11 @@ class Store:
         from app.store.bot.manager import BotManager
         from app.store.admin.accessor import AdminAccessor
         from app.store.quiz.accessor import QuizAccessor
-        # from app.store.vk_api.accessor import VkApiAccessor
+        from app.store.vk_api.accessor import VkApiAccessor
 
         self.quizzes = QuizAccessor(app)
         self.admins = AdminAccessor(app)
-        # self.vk_api = VkApiAccessor(app)
+        self.vk_api = VkApiAccessor(app)
         self.bots_manager = BotManager(app)
 
 
@@ -24,3 +24,4 @@ def setup_store(app: "Application"):
     app.store = Store(app)
     app.on_startup.append(app.store.admins.connect)
     app.on_cleanup.append(app.store.admins.disconnect)
+
