@@ -32,7 +32,10 @@ class ThemeAddView(AuthRequiredMixin, View):
     @response_schema(ThemeSchema, 200)
     async def post(self):
         data = await self.request.json()
-        title = data['title']
+        try:
+            title = data['title']
+        except KeyError:
+            raise HTTPBadRequest
 
         theme_exist = await self.store.quizzes.get_theme_by_title(title=title)
         if theme_exist:
@@ -48,7 +51,7 @@ class ThemeListView(AuthRequiredMixin, View):
     async def get(self):
         themes = await self.request.app.store.quizzes.list_themes()
         raw_themes = [ThemeSchema().dump(theme) for theme in themes]
-        return json_response(data=raw_themes)
+        return json_response(data={'themes':raw_themes})
 
 
 class QuestionAddView(AuthRequiredMixin, View):
@@ -72,14 +75,14 @@ class QuestionAddView(AuthRequiredMixin, View):
             
         if len(answers) == 1:
             raise HTTPBadRequest
-
-        question_exist = await self.store.quizzes.get_question_by_title(title=title)
-        if question_exist:
-            raise HTTPConflict
         
         theme_exist = await self.store.quizzes.get_theme_by_id(id_=theme_id)
         if not theme_exist:
             raise HTTPNotFound
+
+        question_exist = await self.store.quizzes.get_question_by_title(title=title)
+        if question_exist:
+            raise HTTPConflict
         
         question = await self.store.quizzes.create_question(title=title, theme_id=theme_id, answers=answers)
         return json_response(data=QuestionSchema().dump(question))
@@ -89,10 +92,16 @@ class QuestionListView(AuthRequiredMixin, View):
     @querystring_schema(ThemeIdSchema)
     @response_schema(ListQuestionSchema, 200)
     async def get(self):
-        theme_id = self.request.query['theme_id']
+
+        try:
+            theme_id = self.request.query['theme_id']
+        except KeyError:
+            theme_id = 0
+        
         questions = await self.request.app.store.quizzes.list_questions(int(theme_id))
         if not questions:
-            raise HTTPNotFound
+            return json_response(data={'questions': questions})
+        
         raw_questions = [QuestionSchema().dump(question) for question in questions]
-        return json_response(data=raw_questions)
+        return json_response(data={'questions': raw_questions})
     

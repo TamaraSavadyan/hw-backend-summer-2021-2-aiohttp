@@ -5,6 +5,7 @@ from aiohttp.web import (
     View as AiohttpView,
     Request as AiohttpRequest,
 )
+from aiohttp_apispec import setup_aiohttp_apispec
 
 from aiohttp_session import setup, SimpleCookieStorage
 from app.admin.models import Admin
@@ -53,6 +54,7 @@ def setup_app(config_path: str) -> Application:
     setup_routes(app)
     # session_key = app.config.session.key
     setup(app, SimpleCookieStorage())
+    setup_aiohttp_apispec(app)
     setup_middlewares(app)
     setup_store(app)
     return app

@@ -1,7 +1,10 @@
 from hashlib import sha256
+import json
+from http.client import HTTPException
 from aiohttp_apispec import request_schema, response_schema, querystring_schema
-from aiohttp.web_exceptions import HTTPNotFound, HTTPUnauthorized, HTTPForbidden
+from aiohttp.web_exceptions import HTTPNotFound, HTTPUnauthorized, HTTPForbidden, HTTPBadRequest
 from aiohttp_session import get_session, new_session
+from marshmallow import ValidationError
 from app.admin.schemes import AdminResponseSchema, AdminSchema
 from app.web.app import View
 from app.web.mixins import AuthRequiredMixin
@@ -12,14 +15,18 @@ class AdminLoginView(View):
     @request_schema(AdminSchema)
     @response_schema(AdminResponseSchema, 200)
     async def post(self):
-
         data = await self.request.json()
-        email = data['email']
-        password = data['password']
+        try:
+            email = data['email']
+            password = data['password']
+        except KeyError:
+            raise HTTPBadRequest
+        
         hashed_password = sha256(password.encode()).hexdigest()
+                
         admin = await self.request.app.store.admins.get_by_email(email=email)
         if not admin:
-            raise HTTPNotFound
+            raise HTTPForbidden
         
         session = await get_session(self.request)
         session['token'] = self.request.app.config.session.key

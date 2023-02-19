@@ -31,12 +31,12 @@ class AdminAccessor(BaseAccessor):
         admin = await self.create_admin(self.app.config.admin.email, self.app.config.admin.password)
         self.app.database.admins.append(admin)
 
-        print('connect to database')
+        # print('connect to database')
         
 
     async def disconnect(self, _: 'Application'):
         self.app = None
-        print('disconnect from database')
+        # print('disconnect from database')
 
 
     # async def create_session(self):

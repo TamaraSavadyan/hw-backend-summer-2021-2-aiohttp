@@ -40,7 +40,9 @@ class QuizAccessor(BaseAccessor):
 
     async def list_questions(self, theme_id: Optional[int] = None) -> list[Question]:
         result = []
-        for question in self.app.database.questions:
-            if question.theme_id == theme_id:
-                result.append(question)
-        return result    
+        if theme_id:
+            for question in self.app.database.questions:
+                if question.theme_id == theme_id:
+                    result.append(question)
+            return result
+        return self.app.database.questions

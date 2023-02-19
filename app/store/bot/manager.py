@@ -31,7 +31,7 @@ class BotManager:
         for update in updates:
             await self.app.store.vk_api.send_message(
                 Message(
-                    user_id=update.object.user_id,
+                    user_id=update.object.message.id,
                     text="Привет!",
                 )
             )

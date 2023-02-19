@@ -6,7 +6,6 @@ from aiohttp.web_exceptions import HTTPUnprocessableEntity, HTTPException
 from aiohttp.web_middlewares import middleware
 from aiohttp_apispec import validation_middleware
 from aiohttp_session import get_session
-import aiohttp_session
 from app.admin.models import Admin
 from app.web.utils import error_json_response
 
@@ -64,4 +63,4 @@ async def error_handling_middleware(request: "Request", handler):
 def setup_middlewares(app: "Application"):
     app.middlewares.append(error_handling_middleware)
     app.middlewares.append(auth_middleware)
-    # app.middlewares.append(validation_middleware)
+    app.middlewares.append(validation_middleware)
