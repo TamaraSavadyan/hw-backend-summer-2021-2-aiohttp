@@ -1,5 +1,6 @@
 import os
 # smth random
+# random
 
 from app.web.app import setup_app
 from aiohttp.web import run_app
